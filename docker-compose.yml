@@ -24,6 +24,10 @@ services:
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/patterns:/usr/share/logstash/patterns
+
+    command: -f /usr/share/logstash/config/ --config.reload.automatic
+
     ports:
       - "5000:5000"
     environment:
@@ -39,6 +43,16 @@ services:
       - ./kibana/config/:/usr/share/kibana/config
     ports:
       - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+  grafana:
+    build: grafana
+    volumes:
+      - ./grafana/conf/:/etc/grafana/
+    ports:
+      - "3000:3000"
     networks:
       - elk
     depends_on:
